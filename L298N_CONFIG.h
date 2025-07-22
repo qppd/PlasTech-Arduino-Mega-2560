@@ -1,12 +1,13 @@
-#define IN1 5
-#define IN2 6
-#define ENA 9  // Must be a PWM-capable pin
+#define IN1 11
+#define IN2 12
+#define ENA 10  // Must be a PWM-capable pin
+
+void stopMotor();
 
 void initL298N() {
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
   pinMode(ENA, OUTPUT);
-
   stopMotor();
 }
 

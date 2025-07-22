@@ -9,16 +9,14 @@ Servo coinServo;
 Servo binServo;
 
 void initSERVO() {
-
   doorServo.attach(SERVO_SIGNAL_PIN);
-  doorServo.write(0); 
-
+  doorServo.write(0);
   coinServo.attach(COIN_SERVO_PIN);
-  coinServo.write(0);  
-
+  coinServo.write(0);
   binServo.attach(BIN_SERVO_PIN);
-  binServo.write(0);  
+  binServo.write(0);
 }
 
 void sweepSERVO(int angle, int speed) {
+  // Implement as needed
 }

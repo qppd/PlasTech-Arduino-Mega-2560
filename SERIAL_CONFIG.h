@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 
-#define MEGA_RX D7  // Connect to MEGA's TX
-#define MEGA_TX D6  // Connect to MEGA's RX
+#define MEGA_RX 7  // Connect to MEGA's TX
+#define MEGA_TX 6  // Connect to MEGA's RX
 
 SoftwareSerial MEGASerial(MEGA_RX, MEGA_TX);  // RX, TX
 

@@ -5,6 +5,6 @@ void initLIMITSwitch() {
   pinMode(LIMIT_SWITCH_PIN, INPUT_PULLUP);
 }
 
-void checkLIMIT(){
-  
+void checkLIMIT() {
+  // Implement limit switch logic in main sketch
 }

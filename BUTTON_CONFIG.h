@@ -5,9 +5,9 @@
 //Inputs and Button Logic
 const int numOfInputs = 2;  // number of buttons switches
 int inputState[numOfInputs];
-int lastInputState[numOfInputs] = { HIGH, HIGH, HIGH, HIGH };
-bool inputFlags[numOfInputs] = { HIGH, HIGH, HIGH, HIGH };
-long lastDebounceTime[numOfInputs] = { 0, 0, 0, 0 };
+int lastInputState[numOfInputs] = { HIGH, HIGH };
+bool inputFlags[numOfInputs] = { HIGH, HIGH };
+long lastDebounceTime[numOfInputs] = { 0, 0 };
 long debounceDelay = 10;
 
 const int inputPins[numOfInputs] = { LCD_BUTTON_PIN, COIN_BUTTON_PIN };
@@ -33,10 +33,10 @@ void setInputFlags() {
 void resolveInputFlags() {
   for (int i = 0; i < numOfInputs; i++) {
     if (inputFlags[i] == LOW) {
-      inputAction(i);
+      // inputAction(i); // Commented out, not defined
       delay(10);
       inputFlags[i] = HIGH;
-      lastActivityTime = millis();
+      // lastActivityTime = millis(); // Commented out, not defined
     }
   }
 }

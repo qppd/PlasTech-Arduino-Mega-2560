@@ -6,7 +6,7 @@ void initTCTRT5000() {
   pinMode(IR_SENSOR_PIN, INPUT);
 }
 
-void checkBOTTLECap(){
-
+void checkBOTTLECap() {
+  // Implement cap detection logic in main sketch
 }
 
