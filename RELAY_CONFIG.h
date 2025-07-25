@@ -1,5 +1,5 @@
 
-#define SERVO_RELAY_PIN 7
+#define SERVO_RELAY_PIN 35
 #define COIN_RELAY_PIN 34
 #define BIN_RELAY_PIN 37
 

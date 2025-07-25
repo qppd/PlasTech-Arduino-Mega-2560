@@ -1,22 +1,26 @@
 #include <LiquidCrystal_I2C.h>
 
-#define LCD_BUTTON_PIN 8
-
 LiquidCrystal_I2C lcd(0x27, 20, 4);
+// LiquidCrystal_I2C lcd(0x27, 20, 4);
 
-void initLCD() {
+void initLCD(){
   lcd.init();
   lcd.noBacklight();
+  //lcd.setCursor(0, 0);
+  //lcd.print("Calibrating...");
 }
-void clearLCD() {
-  lcd.clear();
-}
-void turnLCDBacklight(bool open) {
-  if (open)
+
+void turnLCDBacklight(bool open){
+  if(open)
     lcd.backlight();
   else
     lcd.noBacklight();
 }
+
+void clearLCD(){
+  lcd.clear();
+}
+
 void setLCDText(String text, int x, int y) {
   lcd.setCursor(x, y);
   lcd.print(text);

@@ -17,6 +17,6 @@ void initSERVO() {
   binServo.write(0);
 }
 
-void sweepSERVO(int angle, int speed) {
+void operateSERVO(int angle, int speed) {
   // Implement as needed
 }

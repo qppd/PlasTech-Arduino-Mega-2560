@@ -1,6 +1,6 @@
-#define IN1 11
+ #define IN1 11
 #define IN2 12
-#define ENA 10  // Must be a PWM-capable pin
+#define ENA 10  
 
 void stopMotor();
 
