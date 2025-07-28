@@ -7,20 +7,6 @@ const unsigned long motorRunDuration = 5000;  // Run each state for 5 seconds
 
 int motorState = 0;  // 0 = FORWARD, 1 = BACKWARD, 2 = STOPPED
 
-#include "BTS7960_CONFIG.h"
-#include "BUTTON_CONFIG.h"
-#include "CAPACITIVE_CONFIG.h"
-#include "CURRENT_SENSOR_CONFIG.h"
-#include "L298N_CONFIG.h"
-#include "LCD_CONFIG.h"
-#include "LED_CONFIG.h"
-#include "LOADCELL_CONFIG.h"
-#include "RELAY_CONFIG.h"
-#include "SERIAL_CONFIG.h"
-#include "SERVO_CONFIG.h"
-#include "TCTRT5000_CONFIG.h"
-// #include "ULTRASONIC_CONFIG.h"
-
 // State machine for stages
 enum Stage {
   STAGE_POWER_OFF = 0,
@@ -36,29 +22,45 @@ bool lcdPower = false;
 int smallBottleCount = 0;
 int bigBottleCount = 0;
 
+#include "BTS7960_CONFIG.h"
+#include "SERVO_CONFIG.h"
+#include "RELAY_CONFIG.h"
+#include "TCTRT5000_CONFIG.h"
+#include "LED_CONFIG.h"
+#include "LCD_CONFIG.h"
+#include "BUTTON_CONFIG.h"
+#include "CAPACITIVE_CONFIG.h"
+#include "CURRENT_SENSOR_CONFIG.h"
+#include "L298N_CONFIG.h"
+#include "LOADCELL_CONFIG.h"
+#include "SERIAL_CONFIG.h"
+#include "ULTRASONIC_CONFIG.h"
+
 void setup() {
   Serial.begin(115200);
   Serial.println("Starting Arduino Mega 2560");
 
-  //initBTS7960();
+  initBTS7960();
   initL298N();
-  //initLCD();
-  //initBUTTONS();
+  initLCD();
+  initBUTTONS();
 
 
   initLED();
-  //initLIMITSwitch();
-  //initHX711();
-  //initRELAY();
+
+  initHX711();
+  initRELAY();
   //initSERIAL();
-  //initSERVO();
-  //initTCTRT5000();
-  //initULTRASONIC();
-  //initCapacitiveSensor();
-  //initCurrentSensor();
+  initSERVO();
+  initTCTRT5000();
+  initULTRASONIC();
+  initCapacitiveSensor();
+  initCurrentSensor();
   // BUTTON_CONFIG.h does not have a single init function
-  turnLCDBacklight(true);
-  setLCDText("Hello!", 0, 0);
+  //turnLCDBacklight(true);
+  //setLCDText("Hello!", 0, 0);
+
+
 
   // motorState = 0;
   // motorStartTime = millis();
@@ -66,293 +68,349 @@ void setup() {
   // Serial.println("Forward");
 }
 
-void loop() {
-
-  rotateCW(200);
-  Serial.println("Turning CW");
-  delay(5000);
-  rotateCCW(200);
-  Serial.println("Turning CCW");
-  delay(5000);
-
-  // turnLED(RED_LED_PIN, true);
-  // Serial.println("Turning on RED");
-  // delay(2000);
-  // turnLED(RED_LED_PIN, false);
-  // Serial.println("Turning off RED");
-  // delay(2000);
-  // turnLED(GREEN_LED_PIN, true);
-  // Serial.println("Turning on GREEN");
-  // delay(2000);
-  // turnLED(GREEN_LED_PIN, false);
-  // Serial.println("Turning off GREEN");
-  // delay(2000);
-
-
-  // currentMillis = millis();
-
-  // // 1. Periodic current reading
-  // if (currentMillis - previousMillis >= currentReadInterval) {
-  //   previousMillis = currentMillis;
-  //   Serial.println("CURRENT: " + String(readCurrentSensor()));
-  // }
-
-  // // 2. Handle motor state change after 5 seconds
-  // if (currentMillis - motorStartTime >= motorRunDuration) {
-  //   if (motorState == 0) {  // Forward → Backward
-  //     bts7960Backward(200);
-  //     Serial.println("Backward");
-  //     motorState = 1;
-  //   } else if (motorState == 1) {  // Backward → Stop
-  //     stopBTS7960();
-  //     Serial.println("Stopped");
-  //     motorState = 2;
-  //   } else if (motorState == 2) {  // Stop → Forward
-  //     // bts7960Forward(200);
-  //     // Serial.println("Forward");
-  //     motorState = 0;
-  //   }
-
-  //   motorStartTime = currentMillis;  // Reset timer
-  // }
-
-  //Serial.println("CURRENT: " + String(readCurrentSensor()));
-
-  // bts7960Forward(200);
-  // Serial.println("Forward");
-  // delay(5000);
-  // bts7960Backward(200);
-  // Serial.println("Backward!");
-  // delay(5000);
-  // stopBTS7960();
-  // Serial.println("Stopped!");
-  // delay(5000);
-
-  // setInputFlags();
-  // resolveInputFlags();
-
-  // Serial.println("WIDTH: " + String(getULTRASONICDistance(0)) + " cm");
-  // Serial.println("SMALL: " + String(getULTRASONICDistance(1)) + " cm");
-  // Serial.println("LARGE: " + String(getULTRASONICDistance(2)) + " cm");
-  // Serial.println("CRUSHER: " + String(getULTRASONICDistance(3)) + " cm");
-  // Serial.println("COIN: " + String(getULTRASONICDistance(4)) + " cm");
-  // Serial.println("BIN: " + String(getULTRASONICDistance(5)) + " cm");
-
-  // Serial.println("isBottleDetected: " + String(isCapacitiveTouched()));
-  // delay(1000);
-
-  // operateRELAY(SERVO_RELAY_PIN, true);
-  // Serial.println("SERVO RELAY ACTIVATED!");
-  // delay(1000);
-  // operateRELAY(SERVO_RELAY_PIN, false);
-  // Serial.println("SERVO RELAY DEACTIVATED!");
-  // delay(1000);
-
-  // operateRELAY(COIN_RELAY_PIN, true);
-  // Serial.println("COIN RELAY ACTIVATED!");
-  // delay(1000);
-  // operateRELAY(COIN_RELAY_PIN, false);
-  // Serial.println("COIN RELAY DEACTIVATED!");
-  // delay(1000);
-
-  // operateRELAY(BIN_RELAY_PIN, true);
-  // Serial.println("BIN RELAY ACTIVATED!");
-  // delay(1000);
-  // operateRELAY(BIN_RELAY_PIN, false);
-  // Serial.println("BIN RELAY DEACTIVATED!");
-  // delay(1000);
-}
-
 // void loop() {
-//   switch (currentStage) {
-//     case STAGE_POWER_OFF:
-//       // Stage 0: Wait for LCD power button
-//       if (digitalRead(LCD_BUTTON_PIN) == LOW) {
-//         turnLCDBacklight(true);
-//         clearLCD();
-//         setLCDText("System Powered ON", 0, 0);
-//         turnLED(GREEN_LED_PIN, true);
-//         lcdPower = true;
-//         delay(2000);
-//         clearLCD();
-//         setLCDText("Waiting Bottle...", 0, 0);
-//         turnLED(GREEN_LED_PIN, false);
-//         currentStage = STAGE_CAP_DETECTION;
-//       } else {
-//         turnLCDBacklight(false);
-//         turnLED(RED_LED_PIN, false);
-//         turnLED(GREEN_LED_PIN, false);
-//       }
-//       break;
 
-//     case STAGE_CAP_DETECTION:
-//       // Stage 1: Wait for limit switch (start trigger)
-//       if (digitalRead(LIMIT_SWITCH_PIN) == LOW) {
-//         clearLCD();
-//         setLCDText("Checking for cap...", 0, 0);
-//         delay(500);
-//         int irValue = digitalRead(IR_SENSOR_PIN);
-//         if (irValue == LOW) {
-//           // Cap detected
-//           turnLED(RED_LED_PIN, true);
-//           turnLED(GREEN_LED_PIN, false);
-//           clearLCD();
-//           setLCDText("Please remove", 0, 0);
-//           setLCDText("bottle cap", 0, 1);
-//         } else {
-//           // No cap detected
-//           turnLED(RED_LED_PIN, false);
-//           turnLED(GREEN_LED_PIN, true);
-//           clearLCD();
-//           setLCDText("No Cap Detected", 0, 0);
-//           setLCDText("Opening Door...", 0, 1);
-//           operateRELAY(SERVO_RELAY_PIN, true); // Power servo
-//           delay(100);
-//           doorServo.write(0); // Open door
-//           delay(3000);
-//           doorServo.write(180); // Close door
-//           delay(500);
-//           operateRELAY(SERVO_RELAY_PIN, false); // Power off servo
-//           turnLED(GREEN_LED_PIN, false);
-//           clearLCD();
-//           setLCDText("Insert Bottle...", 0, 0);
-//           currentStage = STAGE_MEASUREMENT;
-//         }
-//         delay(1500);
-//         // Wait for limit switch release
-//         while (digitalRead(LIMIT_SWITCH_PIN) == LOW);
-//         delay(300);
-//       }
-//       break;
+//   Serial.println("WEIGHT:" + String(getHX711Weight()));
+//   delay(50);
+// Serial.println("IR:" + String(checkBOTTLECap()));
+// delay(50);
 
-//     case STAGE_MEASUREMENT:
-//       // Stage 2: Measurement
-//       if (isCapacitiveTouched()) {
-//         clearLCD();
-//         setLCDText("Plastic Detected", 0, 0);
-//         doorServo.write(180); // Close door
-//         delay(500);
-//         // Measure bottle
-//         int width = getULTRASONICDistance(0); // WIDTH
-//         int smallHeight = getULTRASONICDistance(1); // SMALL HEIGHT
-//         int largeHeight = getULTRASONICDistance(2); // LARGE HEIGHT
-//         float weight = getHX711Weight();
-//         bool smallDetected = (smallHeight < 100 && width < 100); // Adjust threshold
-//         bool bigDetected = (smallHeight < 100 && largeHeight < 100); // Adjust threshold
-//         clearLCD();
-//         setLCDText("Width:", 0, 0); setLCDText(width, 7, 0);
-//         setLCDText("S:", 0, 1); setLCDText(smallHeight, 3, 1);
-//         setLCDText("L:", 8, 1); setLCDText(largeHeight, 10, 1);
-//         setLCDText("Weight:", 0, 2); setLCDText(weight, 8, 2);
-//         delay(1000);
-//         if (smallDetected && weight >= 9 && weight <= 15) {
-//           smallBottleCount++;
-//           clearLCD();
-//           setLCDText("Small Bottle OK", 0, 0);
-//           turnLED(GREEN_LED_PIN, true);
-//           rotateCW(200); // Accept
-//           delay(3000);
-//           stopMotor();
-//           turnLED(GREEN_LED_PIN, false);
-//           currentStage = STAGE_CRUSHER;
-//         } else if (bigDetected && weight >= 33 && weight <= 44) {
-//           bigBottleCount++;
-//           clearLCD();
-//           setLCDText("Big Bottle OK", 0, 0);
-//           turnLED(GREEN_LED_PIN, true);
-//           rotateCW(200); // Accept
-//           delay(3000);
-//           stopMotor();
-//           turnLED(GREEN_LED_PIN, false);
-//           currentStage = STAGE_CRUSHER;
-//         } else {
-//           turnLED(RED_LED_PIN, true);
-//           clearLCD();
-//           setLCDText("Rejected!", 0, 0);
-//           setLCDText("Opening Door", 0, 1);
-//           doorServo.write(0); // Open door
-//           delay(2000);
-//           rotateCCW(200); // Reject
-//           delay(3000);
-//           stopMotor();
-//           doorServo.write(180); // Close door
-//           delay(500);
-//           turnLED(RED_LED_PIN, false);
-//           currentStage = STAGE_CAP_DETECTION;
-//         }
-//         delay(1500);
-//       }
-//       break;
+// Door servo
+// Serial.println("Opening door servo to 90°");
+// operateSERVO(doorServo, currentDoorAngle, 90, 10);
+// delay(2000);
 
-//     case STAGE_CRUSHER:
-//       // Stage 3: Bottle Crusher
-//       clearLCD();
-//       setLCDText("Crushing...", 0, 0);
-//       bts7960Forward(200); // Extend actuator
-//       delay(4000); // Adjust as needed
-//       float current = readCurrentSensor();
-//       if (current > 2.0) { // Stall detected, adjust threshold
-//         stopBTS7960();
-//         delay(1000);
-//         bts7960Backward(200); // Retract actuator
-//         delay(4000);
-//         stopBTS7960();
-//         clearLCD();
-//         setLCDText("Crushed!", 0, 0);
-//         delay(1000);
-//         currentStage = STAGE_SECOND_MEASUREMENT;
-//       } else {
-//         stopBTS7960();
-//         currentStage = STAGE_SECOND_MEASUREMENT;
-//       }
-//       break;
+// Serial.println("Closing door servo to 0°");
+// operateSERVO(doorServo, currentDoorAngle, 0, 10);
+// delay(2000);
 
-//     case STAGE_SECOND_MEASUREMENT:
-//       // Stage 4: Second measurement (width after crushing)
-//       int widthAfter = getULTRASONICDistance(0); // WIDTH
-//       clearLCD();
-//       setLCDText("Width After:", 0, 0);
-//       setLCDText(widthAfter, 13, 0);
-//       delay(1000);
-//       // Open bin door
-//       operateRELAY(BIN_RELAY_PIN, true);
-//       delay(100);
-//       binServo.write(0); // Open
-//       delay(2000);
-//       binServo.write(180); // Close
-//       delay(500);
-//       operateRELAY(BIN_RELAY_PIN, false);
-//       clearLCD();
-//       setLCDText("Ready for next", 0, 0);
-//       delay(1000);
-//       currentStage = STAGE_COIN_DISPENSE;
-//       break;
+// Coin servo
+// Serial.println("Opening coin servo to 90°");
+// operateSERVO(coinServo, currentCoinAngle, 90, 10);
+// delay(2000);
 
-//     case STAGE_COIN_DISPENSE:
-//       // Stage 5: Coin dispenser
-//       clearLCD();
-//       setLCDText("Press Coin Btn", 0, 0);
-//       if (digitalRead(COIN_BUTTON_PIN) == LOW) {
-//         operateRELAY(COIN_RELAY_PIN, true);
-//         delay(100);
-//         coinServo.write(0);
-//         delay(1000);
-//         coinServo.write(180);
-//         delay(500);
-//         operateRELAY(COIN_RELAY_PIN, false);
-//         clearLCD();
-//         setLCDText("Coin Dispensed", 0, 0);
-//         delay(2000);
-//         // Show bottle counts
-//         clearLCD();
-//         setLCDText("Small:", 0, 0); setLCDText(smallBottleCount, 7, 0);
-//         setLCDText("Big:", 0, 1); setLCDText(bigBottleCount, 7, 1);
-//         delay(3000);
-//         // Reset for next user
-//         smallBottleCount = 0;
-//         bigBottleCount = 0;
-//         currentStage = STAGE_POWER_OFF;
-//       }
-//       break;
-//   }
+// Serial.println("Closing coin servo to 0°");
+// operateSERVO(coinServo, currentCoinAngle, 0, 10);
+// delay(2000);
+
+// Bin servo
+// Serial.println("Opening bin servo to 90°");
+// operateSERVO(binServo, currentBinAngle, 90, 10);
+// delay(2000);
+
+// Serial.println("Closing bin servo to 0°");
+// operateSERVO(binServo, currentBinAngle, 0, 10);
+// delay(2000);
+
+
+// rotateCW(200);
+// Serial.println("Turning CW");
+// delay(5000);
+// rotateCCW(200);
+// Serial.println("Turning CCW");
+// delay(5000);
+
+// turnLED(RED_LED_PIN, true);
+// Serial.println("Turning on RED");
+// delay(2000);
+// turnLED(RED_LED_PIN, false);
+// Serial.println("Turning off RED");
+// delay(2000);
+// turnLED(GREEN_LED_PIN, true);
+// Serial.println("Turning on GREEN");
+// delay(2000);
+// turnLED(GREEN_LED_PIN, false);
+// Serial.println("Turning off GREEN");
+// delay(2000);
+
+
+// currentMillis = millis();
+
+// // 1. Periodic current reading
+// if (currentMillis - previousMillis >= currentReadInterval) {
+//   previousMillis = currentMillis;
+//   Serial.println("CURRENT: " + String(readCurrentSensor()));
 // }
+
+// // 2. Handle motor state change after 5 seconds
+// if (currentMillis - motorStartTime >= motorRunDuration) {
+//   if (motorState == 0) {  // Forward → Backward
+//     bts7960Backward(200);
+//     Serial.println("Backward");
+//     motorState = 1;
+//   } else if (motorState == 1) {  // Backward → Stop
+//     stopBTS7960();
+//     Serial.println("Stopped");
+//     motorState = 2;
+//   } else if (motorState == 2) {  // Stop → Forward
+//     // bts7960Forward(200);
+//     // Serial.println("Forward");
+//     motorState = 0;
+//   }
+
+//   motorStartTime = currentMillis;  // Reset timer
+// }
+
+//Serial.println("CURRENT: " + String(readCurrentSensor()));
+
+// bts7960Forward(200);
+// Serial.println("Forward");
+// delay(5000);
+// bts7960Backward(200);
+// Serial.println("Backward!");
+// delay(5000);
+// stopBTS7960();
+// Serial.println("Stopped!");
+// delay(5000);
+
+// setInputFlags();
+// resolveInputFlags();
+
+// Serial.println("WIDTH: " + String(getULTRASONICDistance(0)) + " cm");
+// Serial.println("SMALL: " + String(getULTRASONICDistance(1)) + " cm");
+// Serial.println("LARGE: " + String(getULTRASONICDistance(2)) + " cm");
+// Serial.println("CRUSHER: " + String(getULTRASONICDistance(3)) + " cm");
+// Serial.println("COIN: " + String(getULTRASONICDistance(4)) + " cm");
+// Serial.println("BIN: " + String(getULTRASONICDistance(5)) + " cm");
+
+// Serial.println("isBottleDetected: " + String(isCapacitiveTouched()));
+// delay(1000);
+
+// operateRELAY(SERVO_RELAY_PIN, true);
+// Serial.println("SERVO RELAY ACTIVATED!");
+// delay(1000);
+// operateRELAY(SERVO_RELAY_PIN, false);
+// Serial.println("SERVO RELAY DEACTIVATED!");
+// delay(1000);
+
+// operateRELAY(COIN_RELAY_PIN, true);
+// Serial.println("COIN RELAY ACTIVATED!");
+// delay(1000);
+// operateRELAY(COIN_RELAY_PIN, false);
+// Serial.println("COIN RELAY DEACTIVATED!");
+// delay(1000);
+
+// operateRELAY(BIN_RELAY_PIN, true);
+// Serial.println("BIN RELAY ACTIVATED!");
+// delay(1000);
+// operateRELAY(BIN_RELAY_PIN, false);
+// Serial.println("BIN RELAY DEACTIVATED!");
+// delay(1000);
+//}
+
+void loop() {
+  setInputFlags();
+  resolveInputFlags();
+
+  Serial.print("WIDTH: " + String(getULTRASONICDistance(0)) + " cm");
+  Serial.print(" --- ");
+  Serial.print("SMALL: " + String(getULTRASONICDistance(1)) + " cm");
+  Serial.print(" --- ");
+  Serial.print("LARGE: " + String(getULTRASONICDistance(2)) + " cm");
+  Serial.print(" --- ");
+  Serial.print("CRUSHER: " + String(getULTRASONICDistance(3)) + " cm");
+  Serial.print(" --- ");
+  Serial.print("COIN: " + String(getULTRASONICDistance(4)) + " cm");
+  Serial.print(" --- ");
+  Serial.println("BIN: " + String(getULTRASONICDistance(5)) + " cm");
+  delay(1500);
+
+  switch (currentStage) {
+      // case STAGE_POWER_OFF:
+      //   // Stage 0: Wait for LCD power button
+      //   if (digitalRead(LCD_BUTTON_PIN) == LOW) {
+      //     turnLCDBacklight(true);
+      //     clearLCD();
+      //     setLCDText("System Powered ON", 0, 0);
+      //     turnLED(GREEN_LED_PIN, true);
+      //     lcdPower = true;
+      //     delay(2000);
+      //     clearLCD();
+      //     setLCDText("Waiting Bottle...", 0, 0);
+      //     turnLED(GREEN_LED_PIN, false);
+      //     currentStage = STAGE_CAP_DETECTION;
+      //   } else {
+      //     turnLCDBacklight(false);
+      //     turnLED(RED_LED_PIN, false);
+      //     turnLED(GREEN_LED_PIN, false);
+      //   }
+      //   break;
+
+    case STAGE_CAP_DETECTION:
+      // Stage 1: Wait for limit switch (start trigger)
+      if (digitalRead(LIMIT_SWITCH_PIN) == LOW) {
+        clearLCD();
+        setLCDText("Checking for cap...", 0, 0);
+        delay(500);
+        int irValue = digitalRead(IR_SENSOR_PIN);
+        if (irValue == LOW) {
+          // Cap detected
+          turnLED(RED_LED_PIN, true);
+          turnLED(GREEN_LED_PIN, false);
+          clearLCD();
+          setLCDText("Please remove", 0, 0);
+          setLCDText("bottle cap", 0, 1);
+        } else {
+          // No cap detected
+          turnLED(RED_LED_PIN, false);
+          turnLED(GREEN_LED_PIN, true);
+          clearLCD();
+          setLCDText("No Cap Detected", 0, 0);
+          setLCDText("Opening Door...", 0, 1);
+          operateRELAY(SERVO_RELAY_PIN, true);  // Power servo
+          delay(100);
+          doorServo.write(0);  // Open door
+          delay(3000);
+          doorServo.write(180);  // Close door
+          delay(500);
+          operateRELAY(SERVO_RELAY_PIN, false);  // Power off servo
+          turnLED(GREEN_LED_PIN, false);
+          clearLCD();
+          setLCDText("Insert Bottle...", 0, 0);
+          currentStage = STAGE_MEASUREMENT;
+        }
+        delay(1500);
+        // Wait for limit switch release
+        while (digitalRead(LIMIT_SWITCH_PIN) == LOW)
+          ;
+        delay(300);
+      }
+      break;
+
+    case STAGE_MEASUREMENT:
+      // Stage 2: Measurement
+      if (isCapacitiveTouched()) {
+        clearLCD();
+        setLCDText("Plastic Detected", 0, 0);
+        doorServo.write(180);  // Close door
+        delay(500);
+        // Measure bottle
+        int width = getULTRASONICDistance(0);        // WIDTH
+        int smallHeight = getULTRASONICDistance(1);  // SMALL HEIGHT
+        int largeHeight = getULTRASONICDistance(2);  // LARGE HEIGHT
+        float weight = getHX711Weight();
+        bool smallDetected = (smallHeight < 100 && width < 100);      // Adjust threshold
+        bool bigDetected = (smallHeight < 100 && largeHeight < 100);  // Adjust threshold
+        clearLCD();
+        setLCDText("Width:", 0, 0);
+        setLCDText(width, 7, 0);
+        setLCDText("S:", 0, 1);
+        setLCDText(smallHeight, 3, 1);
+        setLCDText("L:", 8, 1);
+        setLCDText(largeHeight, 10, 1);
+        setLCDText("Weight:", 0, 2);
+        setLCDText(weight, 8, 2);
+        delay(1000);
+        if (smallDetected && weight >= 9 && weight <= 15) {
+          smallBottleCount++;
+          clearLCD();
+          setLCDText("Small Bottle OK", 0, 0);
+          turnLED(GREEN_LED_PIN, true);
+          rotateCW(200);  // Accept
+          delay(3000);
+          stopMotor();
+          turnLED(GREEN_LED_PIN, false);
+          currentStage = STAGE_CRUSHER;
+        } else if (bigDetected && weight >= 33 && weight <= 44) {
+          bigBottleCount++;
+          clearLCD();
+          setLCDText("Big Bottle OK", 0, 0);
+          turnLED(GREEN_LED_PIN, true);
+          rotateCW(200);  // Accept
+          delay(3000);
+          stopMotor();
+          turnLED(GREEN_LED_PIN, false);
+          currentStage = STAGE_CRUSHER;
+        } else {
+          turnLED(RED_LED_PIN, true);
+          clearLCD();
+          setLCDText("Rejected!", 0, 0);
+          setLCDText("Opening Door", 0, 1);
+          doorServo.write(0);  // Open door
+          delay(2000);
+          rotateCCW(200);  // Reject
+          delay(3000);
+          stopMotor();
+          doorServo.write(180);  // Close door
+          delay(500);
+          turnLED(RED_LED_PIN, false);
+          currentStage = STAGE_CAP_DETECTION;
+        }
+        delay(1500);
+      }
+      break;
+
+    case STAGE_CRUSHER:
+      // Stage 3: Bottle Crusher
+      clearLCD();
+      setLCDText("Crushing...", 0, 0);
+      bts7960Forward(200);  // Extend actuator
+      delay(4000);          // Adjust as needed
+      float current = readCurrentSensor();
+      if (current > 2.0) {  // Stall detected, adjust threshold
+        stopBTS7960();
+        delay(1000);
+        bts7960Backward(200);  // Retract actuator
+        delay(4000);
+        stopBTS7960();
+        clearLCD();
+        setLCDText("Crushed!", 0, 0);
+        delay(1000);
+        currentStage = STAGE_SECOND_MEASUREMENT;
+      } else {
+        stopBTS7960();
+        currentStage = STAGE_SECOND_MEASUREMENT;
+      }
+      break;
+
+    case STAGE_SECOND_MEASUREMENT:
+      // Stage 4: Second measurement (width after crushing)
+      int widthAfter = getULTRASONICDistance(0);  // WIDTH
+      clearLCD();
+      setLCDText("Width After:", 0, 0);
+      setLCDText(widthAfter, 13, 0);
+      delay(1000);
+      // Open bin door
+      operateRELAY(BIN_RELAY_PIN, true);
+      delay(100);
+      binServo.write(0);  // Open
+      delay(2000);
+      binServo.write(180);  // Close
+      delay(500);
+      operateRELAY(BIN_RELAY_PIN, false);
+      clearLCD();
+      setLCDText("Ready for next", 0, 0);
+      delay(1000);
+      currentStage = STAGE_COIN_DISPENSE;
+      break;
+
+    case STAGE_COIN_DISPENSE:
+      // Stage 5: Coin dispenser
+      clearLCD();
+      setLCDText("Press Coin Btn", 0, 0);
+      if (digitalRead(COIN_BUTTON_PIN) == LOW) {
+        operateRELAY(COIN_RELAY_PIN, true);
+        delay(100);
+        coinServo.write(0);
+        delay(1000);
+        coinServo.write(180);
+        delay(500);
+        operateRELAY(COIN_RELAY_PIN, false);
+        clearLCD();
+        setLCDText("Coin Dispensed", 0, 0);
+        delay(2000);
+        // Show bottle counts
+        clearLCD();
+        setLCDText("Small:", 0, 0);
+        setLCDText(smallBottleCount, 7, 0);
+        setLCDText("Big:", 0, 1);
+        setLCDText(bigBottleCount, 7, 1);
+        delay(3000);
+        // Reset for next user
+        smallBottleCount = 0;
+        bigBottleCount = 0;
+        currentStage = STAGE_POWER_OFF;
+      }
+      break;
+  }
+}

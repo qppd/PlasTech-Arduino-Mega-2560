@@ -7,7 +7,7 @@ void initRELAY() {
   pinMode(SERVO_RELAY_PIN, OUTPUT);
   digitalWrite(SERVO_RELAY_PIN, HIGH);
   pinMode(COIN_RELAY_PIN, OUTPUT);
-  digitalWrite(COIN_RELAY_PIN, HIGH);
+  digitalWrite(COIN_RELAY_PIN, LOW);
   pinMode(BIN_RELAY_PIN, OUTPUT);
   digitalWrite(BIN_RELAY_PIN, HIGH);
 }

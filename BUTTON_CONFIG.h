@@ -1,3 +1,4 @@
+#include "Arduino.h"
 
 #define LCD_BUTTON_PIN 50
 #define COIN_BUTTON_PIN 49
@@ -55,11 +56,64 @@ void inputAction(int button) {
   Serial.println("Button: " + String(button));
 
   if (button == 0) {
-    Serial.println("LCD Button clicked!");
+    Serial.println("LCD BUTTON CLICKED!");
+
+    if (currentStage == STAGE_POWER_OFF) {
+
+      // Stage 0: Wait for LCD power button
+      initLCD();
+      turnLCDBacklight(true);
+      delay(2000);
+      clearLCD();
+      setLCDText("System Powered ON", 0, 0);
+      turnLED(GREEN_LED_PIN, true);
+      lcdPower = true;
+      delay(2000);
+      clearLCD();
+      setLCDText("Waiting Bottle...", 0, 0);
+      turnLED(GREEN_LED_PIN, false);
+      currentStage = STAGE_CAP_DETECTION;
+    }
   } else if (button == 1) {
     Serial.println("COIN Button clicked!");
   } else if (button == 2) {
     Serial.println("LIMIT Switch triggered!");
+
+    if (currentStage == STAGE_CAP_DETECTION) {
+      clearLCD();
+      setLCDText("Checking for cap...", 0, 0);
+      delay(500);
+      int irValue = digitalRead(IR_SENSOR_PIN);
+      if (irValue == LOW) {
+        // Cap detected
+        turnLED(RED_LED_PIN, true);
+        turnLED(GREEN_LED_PIN, false);
+        clearLCD();
+        setLCDText("Please remove", 0, 0);
+        setLCDText("bottle cap", 0, 1);
+      } else {
+        // No cap detected
+        turnLED(RED_LED_PIN, false);
+        turnLED(GREEN_LED_PIN, true);
+        clearLCD();
+        setLCDText("No Cap Detected", 0, 0);
+        setLCDText("Opening Door...", 0, 1);
+        operateRELAY(SERVO_RELAY_PIN, true);  // Power servo
+        delay(100);
+        operateSERVO(doorServo, currentDoorAngle, 180, 100);
+        delay(500);
+        operateRELAY(SERVO_RELAY_PIN, false);  // Power off servo
+        turnLED(GREEN_LED_PIN, false);
+        clearLCD();
+        setLCDText("Insert Bottle...", 0, 0);
+        currentStage = STAGE_MEASUREMENT;
+      }
+      delay(1500);
+      // Wait for limit switch release
+      while (digitalRead(LIMIT_SWITCH_PIN) == LOW)
+        ;
+      delay(300);
+    }
   } else {
     Serial.println("Unknown Button!");
   }

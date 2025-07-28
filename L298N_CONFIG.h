@@ -1,6 +1,6 @@
- #define IN1 11
+#define IN1 11
 #define IN2 12
-#define ENA 10  
+#define ENA 10
 
 void stopMotor();
 
@@ -28,4 +28,3 @@ void stopMotor() {
   digitalWrite(IN2, LOW);
   analogWrite(ENA, 0);
 }
-
